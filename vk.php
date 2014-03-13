@@ -38,7 +38,6 @@ class sync_vk {
 	 if ($article_id>0) {
             $method="notes.edit";
 	    $out['note_id']=$article_id;
-	    // ATTENTION! encoding error in 5.14 version of VKAPI
         } else {
             $method="notes.add";
         }
