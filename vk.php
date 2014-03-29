@@ -158,7 +158,6 @@ class sync_vk {
     private function _http ($url, $method = 'GET', $postfields = null) {
         // get from https://github.com/vladkens/VK/blob/master/VK.php
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_USERAGENT,      'niceblog');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_TIMEOUT,        60);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
