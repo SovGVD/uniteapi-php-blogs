@@ -9,6 +9,7 @@ class sync_vk {
     var $api_id="";
     var $api_secret="";
     var $api_url="https://api.vk.com/method/";
+    var $api_agent="agent";
 
 
     public function sync_vk($auth=false) {
@@ -102,7 +103,7 @@ class sync_vk {
                     "username"=>'',
                     "userid"=>$v->uid,
                     "avatar"=>'',
-                    "text"=>$v->message,
+                    "text"=>strip_tags(str_replace("<br>","\n",$v->message)),
                     "dt"=>date("Y-m-d H:i:s",$v->date),
                     "ts"=>$v->date
 		);
@@ -158,6 +159,7 @@ class sync_vk {
     private function _http ($url, $method = 'GET', $postfields = null) {
         // get from https://github.com/vladkens/VK/blob/master/VK.php
         $ch = curl_init();
+        curl_setopt($ch, CURLOPT_USERAGENT,      $this->api_agent);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_TIMEOUT,        60);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
