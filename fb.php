@@ -9,7 +9,7 @@ class sync_fb {
     private $api_redirect_uri="http://domain/oauth/fb/";
 
     function sync_fb($auth=false) {
-	require_once '/path/to/facebook/api/facebook.php';
+	require_once '/facebook.php';
 	if ($auth) {
 	    $this->token=$auth['token'];
 	}
