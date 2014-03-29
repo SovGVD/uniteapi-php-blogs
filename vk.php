@@ -172,8 +172,6 @@ class sync_vk {
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         $rs = curl_exec($ch);
-        //$this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        //$this->http_info = curl_getinfo($ch);
         curl_close($ch);
         return json_decode($rs);
     }
