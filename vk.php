@@ -2,22 +2,24 @@
 class sync_vk {
     var $userid=false;
     var $token=false;
-    var $api_redirect_uri="http://my.domain/oauth/vk/";
+    var $api_redirect_uri="http://domain/oauth/vk/";
     var $api_display="page";
     var $api_scope="notes,wall,offline";
     var $api_version="5.14";
-    var $api_id="123456";
-    var $api_secret="dfsdfgjsdfjgbsdfj";
+    var $api_id="";
+    var $api_secret="";
     var $api_url="https://api.vk.com/method/";
 
 
-    public function sync_vk($auth) {
-	$this->userid=$auth['userid'];
-	$this->token=$auth['token'];
+    public function sync_vk($auth=false) {
+	if ($auth) {
+	    $this->userid=$auth['userid'];
+	    $this->token=$auth['token'];
+	}
     }
 
     public function postArticle($a,$article_id) {
-        // if id==0 or post is not exists - create post... else update post
+        // if id==0 or post is not exists - create note... else update note
         /*
             expect:
                 title, text (in html), privacy[public or private], tags (array), dt (YYYY-MM-DD HH:MM:SS)
@@ -92,10 +94,11 @@ class sync_vk {
 	    $extra_users=array();
 	    foreach($tmp as $v) {
 		$extra_users[$v->uid]=true;
+		$v->message=preg_replace('#\[id(.+)\|(.+)\]#iUs', '$2', $v->message);
 		$out[]=array(
 		    "comment_id"=>$v->id,
-                    "level"=>$v->reply_to>0 ? 1 : 0,
-                    "parent_id"=>$v->reply_to,
+                    "level"=>0,
+                    "parent_id"=>0,
                     "username"=>'',
                     "userid"=>$v->uid,
                     "avatar"=>'',
@@ -168,8 +171,6 @@ class sync_vk {
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         $rs = curl_exec($ch);
-        //$this->http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        //$this->http_info = curl_getinfo($ch);
         curl_close($ch);
         return json_decode($rs);
     }

@@ -8,9 +8,11 @@ class sync_lj {
     var $xmlurl="http://www.livejournal.com/interface/xmlrpc";
     var $comments=array();
 
-    function sync_lj($auth) {
-	$this->username=$auth['username'];
-	$this->md5pass=$auth['md5pass'];
+    function sync_lj($auth=false) {
+	if ($auth) {
+	    $this->username=$auth['username'];
+	    $this->md5pass=$auth['md5pass'];
+	}
     }
 
     public function postArticle($a,$id=0) {
@@ -101,21 +103,23 @@ class sync_lj {
 	$tmp=$this->_send("LJ.XMLRPC.getcomments",$params);
 	if (isset($tmp['comments'])) {
 	    $this->comments=array();
-	    $this->_parseComments($tmp['comments']);
+	    //var_dump($tmp['comments']);
+	    $this->_parseComments($tmp['comments'],0);
 	    return $this->comments;
 	} else {
 	    return false;
 	}
     }
-    private function _parseComments($c) {
+    private function _parseComments($c,$parent_id=0) {
 	foreach ($c as $k=>$v) {
 	    if (isset($v['children'])) {
-		$this->_parseComments($v['children']);
-	    } else {
+		$this->_parseComments($v['children'],$v['dtalkid']);
+	    }
+		if (isset($v['body']->scalar)) $v['body']=$v['body']->scalar;
 		$this->comments[]=array(
 			"comment_id"=>$v['dtalkid'],
 			"level"=>$v['level'],
-			"parent_id"=>$v['parentdtalkid'],
+			"parent_id"=>$parent_id,
 			"username"=>$v['postername'],
 			"userid"=>$v['posterid'],
 			"avatar"=>'',
@@ -123,12 +127,19 @@ class sync_lj {
 			"dt"=>date("Y-m-d H:i:s",$v['datepostunix']),
 			"ts"=>$v['datepostunix']
 		    );
-	    }
 	}
     }
 
     public function getAuthData($auth) {
-	return array("username"=>$auth['username'],"md5pass"=>md5($auth['password']));
+	if ($auth===false) {
+	    // create url for redirect
+	    $url="http://".$_SERVER['SERVER_NAME']."/auth/lj/";
+	    return array("redirect_url"=>$url);
+	} else if (is_array($auth)) {
+	    return array("username"=>$auth['username'],"md5pass"=>md5($auth['password']));
+	} else {
+	    return false;
+	}
     }
 
     private function _send($method, $lj_xmlrpc) {

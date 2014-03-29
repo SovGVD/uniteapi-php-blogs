@@ -3,7 +3,8 @@ Standalone attempt to present unified interface to articles(posts) and comments 
 
 ## support APIs
  - livejournal (getArticle, postArticle, deleteArticle, getComments)
- - VK (getArticle, postArticle, deleteArticle, getComments) (currently post update is not work properly due to API issue)
+ - VK (getArticle, postArticle, deleteArticle, getComments)
+ - Facebook (postArticle (without update), getComments(limited)) (not standalone, required facebook sdk for php)
 
 ## how to use
 see code
