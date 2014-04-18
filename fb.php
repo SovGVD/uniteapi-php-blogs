@@ -9,7 +9,7 @@ class sync_fb {
     private $api_redirect_uri="http://domain/oauth/fb/";
 
     function sync_fb($auth=false) {
-	require_once '/facebook.php';
+	require_once '/where/fbapi/facebook.php';
 	if ($auth) {
 	    $this->token=$auth['token'];
 	}
@@ -24,11 +24,13 @@ class sync_fb {
         // if id==0 or post is not exists - create post... else nothing
         /*
             expect:
-                title, text (in plain text), privacy[public or private], tags (array), dt (YYYY-MM-DD HH:MM:SS), link (optional)
+                title, text (in plain text), privacy[public|private|friends], tags (array), dt (YYYY-MM-DD HH:MM:SS), link (optional)
             return:
                 itemid (unique)
         */
-        if ($a['privacy']!='public') {
+	if ($a['privacy']=='friends') {
+	    $a['privacy']='ALL_FRIENDS';
+        } else if ($a['privacy']!='public') {
             $a['privacy']='SELF';
         } else {
             $a['privacy']='EVERYONE';

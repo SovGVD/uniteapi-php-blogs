@@ -9,7 +9,7 @@ class sync_vk {
     var $api_id="";
     var $api_secret="";
     var $api_url="https://api.vk.com/method/";
-    var $api_agent="agent";
+    var $api_agent="something";
 
 
     public function sync_vk($auth=false) {
@@ -23,11 +23,13 @@ class sync_vk {
         // if id==0 or post is not exists - create note... else update note
         /*
             expect:
-                title, text (in html), privacy[public or private], tags (array), dt (YYYY-MM-DD HH:MM:SS)
+                title, text (in html), privacy[public|private|friends], tags (array), dt (YYYY-MM-DD HH:MM:SS)
             return:
         	itemid (unique)
         */
-	if ($a['privacy']!='public') {
+	if ($a['privacy']=='friends') {
+	    $a['privacy']=1;
+	} else if ($a['privacy']!='public') {
 	    $a['privacy']=3;
 	} else {
 	    $a['privacy']=0;
@@ -58,7 +60,9 @@ class sync_vk {
 	$tmp=$this->_api('notes.getById',array("note_id"=>$article_id,"owner_id"=>$this->userid,"need_wik"=>0));
 	if (isset($tmp->response)) {
 	    $tmp=$tmp->response;
-	    if ($tmp->privacy!=0) {
+	    if ($tmp->privacy==1) {
+		$tmp->privacy="friends";	// TODO not tested!
+	    } else if ($tmp->privacy!=0) {
 		$tmp->privacy="private";
 	    } else {
 		$tmp->privacy="public";

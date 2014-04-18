@@ -6,6 +6,11 @@ Standalone attempt to present unified interface to articles(posts) and comments 
  - VK (getArticle, postArticle, deleteArticle, getComments)
  - Facebook (postArticle (without update), getComments(limited)) (not standalone, required facebook sdk for php)
 
+## Privacy
+ - private
+ - public
+ - friends
+
 ## how to use
 see code
 

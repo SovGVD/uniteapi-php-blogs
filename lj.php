@@ -19,7 +19,7 @@ class sync_lj {
 	// if id==0 or post is not exists - create post... else update post
 	/*
 	    expect:
-		title, text (in html), privacy[public or private], tags (array), dt (YYYY-MM-DD HH:MM:SS)
+		title, text (in html), privacy[public|private|friends], tags (array), dt (YYYY-MM-DD HH:MM:SS)
 	    return:
 		lj itemid (unique)
 	*/
@@ -40,12 +40,23 @@ class sync_lj {
 		"hour"=>(int)$a['dt'][3],
 		"min"=>(int)$a['dt'][4]
 	    );
+	    if($a['privacy']=='friends') {
+		//$params['security']="allfriends";
+		$params['security']="usemask";
+		$params['allowmask']=1;
+	    }
 	if ($id>0) {
 	    $params['itemid']=$id;
 	}
 
 	$tmp=$this->_send("LJ.XMLRPC.".$method,$params);
 	if (isset($tmp['itemid'])) {
+	    if ($id==0) {
+		// TODO dirty untested crunch
+		$method="editevent";
+		$params['itemid']=$tmp['itemid'];
+		$tmp=$this->_send("LJ.XMLRPC.".$method,$params);
+	    }
 	    return $tmp['itemid'];
 	} else {
 	    return false;
@@ -60,9 +71,12 @@ class sync_lj {
 	$tmp=$this->_send("LJ.XMLRPC.getevents",$params);
 	if (isset($tmp['events'][0])) {
 	    $tmp=$tmp['events'][0];
-	    //var_dump($tmp);
 	    if (isset($tmp['security'])){
-		 $tmp['security']='private';
+		if (isset($tmp['allowmask']) && $tmp['allowmask']==1) {
+		    $tmp['security']='friends';
+		} else {
+		    $tmp['security']='private';
+		}
 	    } else {
 		 $tmp['security']='public';
 	    }
