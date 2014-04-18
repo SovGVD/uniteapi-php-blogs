@@ -1,7 +1,7 @@
 # Unite API
 Standalone attempt to present unified interface to articles(posts) and comments for popular blogs and social networks API
 
-## support APIs
+## Support APIs
  - livejournal (getArticle, postArticle, deleteArticle, getComments)
  - VK (getArticle, postArticle, deleteArticle, getComments)
  - Facebook (postArticle (without update), getComments(limited)) (not standalone, required facebook sdk for php)
@@ -11,8 +11,8 @@ Standalone attempt to present unified interface to articles(posts) and comments 
  - public
  - friends
 
-## how to use
-see code
+## How to use
+see examples.php
 
 ## Licence
 MIT
